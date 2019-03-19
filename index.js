@@ -1,14 +1,21 @@
 const fs = require('fs'); // useful for navigating the file system
 const parse = require('csv-parse/lib/sync'); // needed for parsing CSV file data
 
-function linkBuyerToFacility() {
+const existingAccountsFile = fs.readFileSync(__dirname+'/existing-accounts.csv', 'utf8');
+const samAccountsFile = fs.readFileSync(__dirname+'/sam-accounts.csv', 'utf8');
+let outputFileName;
+
+if (require.main === module) {
+  outputFileName = 'missing-accounts.txt'
+  findMissingAccounts(existingAccountsFile, samAccountsFile);
+} else {
+  outputFileName = 'test-missing-accounts.txt'
+}
+
+function findMissingAccounts(existingAccountsFile, samAccountsFile) {
+  const existingAccounts = parse(existingAccountsFile, { columns: true });
+  const samAccounts = parse(samAccountsFile, { columns: true });
   const shortIdLength = 15;
-
-  const existingAccountsContents = fs.readFileSync(__dirname+'/existing-accounts.csv', 'utf8');
-  const samAccountsContents = fs.readFileSync( __dirname+'/sam-accounts.csv', 'utf8');
-
-  const existingAccounts = parse(existingAccountsContents, { columns: true });
-  const samAccounts = parse(samAccountsContents, { columns: true });
 
   const memo = {};
   const unmatched = [];
@@ -24,12 +31,17 @@ function linkBuyerToFacility() {
   });
 
   const fileContents = "Unlinked Account Ids:\n" + unmatched.join('\n')
-  fs.writeFile('missing-accounts.txt', fileContents, 'utf8', (err) => {
+  writeToFile(outputFileName, fileContents);
+  console.log(unmatched);
+  return unmatched;
+}
+
+function writeToFile(fileName, contents) {
+  fs.writeFile(fileName, contents, 'utf8', (err) => {
     if (err) {
       console.log("Error: ", err);
     }
   });
-  console.log(unmatched);
 }
 
-linkBuyerToFacility();
+module.exports = findMissingAccounts;
