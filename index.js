@@ -15,7 +15,7 @@ if (require.main === module) {
 function findMissingAccounts(existingAccountsFile, samAccountsFile) {
   const existingAccounts = parse(existingAccountsFile, { columns: true });
   const samAccounts = parse(samAccountsFile, { columns: true });
-  const shortIdLength = 15;
+  const shortIdLength = 15; // could determine programmatically if needed
 
   const memo = {};
   const unmatched = [];
@@ -32,6 +32,7 @@ function findMissingAccounts(existingAccountsFile, samAccountsFile) {
 
   const fileContents = "Unlinked Account Ids:\n" + unmatched.join('\n')
   writeToFile(outputFileName, fileContents);
+
   console.log(unmatched);
   return unmatched;
 }

@@ -9,8 +9,8 @@ accountHooliId,samUid
 
 const existingAccountsSample = `
 id,hooliId
-6769,0013600001sq7YsQAC
 2196,0013600001oVvosAAC
+6769,0013600001sq7YsQAC
 `.trim()
 
 const expectedUnmatched = ['0013600001ms5al']
